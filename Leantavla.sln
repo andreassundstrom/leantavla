@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leantavla.Server", "Leantavla\Server\Leantavla.Server.csproj", "{64CBB1EB-39E5-437F-B1BD-9B2F0E7CD6A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leantavla.Server", "Leantavla\Server\Leantavla.Server.csproj", "{64CBB1EB-39E5-437F-B1BD-9B2F0E7CD6A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leantavla.Client", "Leantavla\Client\Leantavla.Client.csproj", "{3A628FB4-F2F9-4E33-B950-A5B54BD9BF9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leantavla.Client", "Leantavla\Client\Leantavla.Client.csproj", "{3A628FB4-F2F9-4E33-B950-A5B54BD9BF9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leantavla.Shared", "Leantavla\Shared\Leantavla.Shared.csproj", "{18A336D9-FB04-46BC-BFFB-6470F0028CB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leantavla.Shared", "Leantavla\Shared\Leantavla.Shared.csproj", "{18A336D9-FB04-46BC-BFFB-6470F0028CB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
