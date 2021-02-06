@@ -1,0 +1,18 @@
+﻿@inject HttpClient client
+@page "/lappar"
+<h3>Leanlappar</h3>
+@if (Lappar != null)
+{
+    @foreach (var lapp in Lappar)
+    {
+        <LappComponent Lapp="lapp"></LappComponent>
+    }
+}
+
+@code {
+    public List<Lapp> Lappar { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Lappar = await client.GetFromJsonAsync<List<Lapp>>("api/lapp");
+    }
+}
