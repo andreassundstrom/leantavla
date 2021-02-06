@@ -1,7 +1,6 @@
 ﻿using Leantavla.Server.Models;
 using Leantavla.Shared;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,47 +12,39 @@ namespace Leantavla.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LappController : ControllerBase
+    public class AttributtypController : ControllerBase
     {
         private readonly LenatavlaContext _context;
-        public LappController(LenatavlaContext context)
+        public AttributtypController(LenatavlaContext context)
         {
             _context = context;
         }
-        // GET: api/<LappController>
         [HttpGet]
-        public IEnumerable<Lapp> Get()
+        public IEnumerable<Attributtyp> Get()
         {
-            return _context.Lappar.Include(p => p.Attribut).ThenInclude(p => p.Attributtyp).ToList();
+            return _context.Attributtyper.ToList();
         }
 
-        // GET api/<LappController>/5
+        // GET api/<AttributtypController>/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<LappController>
+        // POST api/<AttributtypController>
         [HttpPost]
-        public async Task Post([FromBody] Lapp lapp)
+        public void Post([FromBody] string value)
         {
-            foreach(var attribute in lapp.Attribut)
-            {
-                attribute.AttributtypId = attribute.Attributtyp.AttributtypId;
-                attribute.Attributtyp = null;
-            }
-            _context.Lappar.Add(lapp);
-            await _context.SaveChangesAsync();
         }
 
-        // PUT api/<LappController>/5
+        // PUT api/<AttributtypController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<LappController>/5
+        // DELETE api/<AttributtypController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

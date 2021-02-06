@@ -1,6 +1,6 @@
 ﻿<RadzenCard Style="max-width:300px;background-color: khaki;margin-top:1em;margin-bottom:1em;">
-    <h3>@Lapp.Sammanfattning</h3>
-    <p>@Lapp.Beskrivning</p>
+    <h3>@Lapp.Attribut.FirstOrDefault(p => p.Attributtyp.Attributnamn == "Sammanfattning")?.AttributVärde</h3>
+    <p>@Lapp.Attribut.FirstOrDefault(p => p.Attributtyp.Attributnamn == "Beskrivning")?.AttributVärde</p>
 </RadzenCard>
 @code {
     [Parameter] public Lapp Lapp { get; set; }

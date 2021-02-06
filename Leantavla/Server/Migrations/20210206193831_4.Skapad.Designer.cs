@@ -4,14 +4,16 @@ using Leantavla.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Leantavla.Server.Migrations
 {
     [DbContext(typeof(LenatavlaContext))]
-    partial class LenatavlaContextModelSnapshot : ModelSnapshot
+    [Migration("20210206193831_4.Skapad")]
+    partial class _4Skapad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,31 +72,17 @@ namespace Leantavla.Server.Migrations
                     b.HasData(
                         new
                         {
-                            AttributtypId = 4,
+                            AttributtypId = 1,
                             Attributbeskrivning = "Personen som skapade lappen",
                             Attributnamn = "Skapare",
                             Datatyp = 0
                         },
                         new
                         {
-                            AttributtypId = 3,
+                            AttributtypId = 2,
                             Attributbeskrivning = "Tidpunkt för när lappen skapades",
                             Attributnamn = "Skapad",
                             Datatyp = 1
-                        },
-                        new
-                        {
-                            AttributtypId = 1,
-                            Attributbeskrivning = "Kort beskrivning av problemet",
-                            Attributnamn = "Sammanfattning",
-                            Datatyp = 0
-                        },
-                        new
-                        {
-                            AttributtypId = 2,
-                            Attributbeskrivning = "Beskrivning av problemet",
-                            Attributnamn = "Beskrivning",
-                            Datatyp = 2
                         });
                 });
 
@@ -104,6 +92,12 @@ namespace Leantavla.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
+
+                    b.Property<string>("Beskrivning")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sammanfattning")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LappId");
 
