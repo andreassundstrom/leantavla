@@ -1,0 +1,51 @@
+﻿@inject HttpClient client
+<div class="row nyLapp p-3">
+    <div class="col">
+        @foreach (Attribut attribut in NyLapp.Attribut)
+        {
+            <div class="row mt-1">
+                <RadzenLabel Style="max-width:100%"
+                             Text="@attribut.Attributtyp.Attributbeskrivning"></RadzenLabel>
+            </div>
+            <div class="row">
+                @if (attribut.Attributtyp.Datatyp == Datatyp.StringDatatype)
+                {
+                    <RadzenTextBox Style="width:100%" @bind-Value="@attribut.StringValue" />
+                }
+                else if (attribut.Attributtyp.Datatyp == Datatyp.LongStringDatatype)
+                {
+                    <RadzenTextArea Style="width:100%" @bind-Value="@attribut.StringValue" />
+                }
+                else if (attribut.Attributtyp.Datatyp == Datatyp.DateDataType)
+                {
+                    <RadzenDatePicker Style="width:100%"
+                                      ShowTime="false"
+                                      DateFormat="d"
+                                      @bind-Value="@attribut.DateValue" />
+                }
+            </div>
+        }
+    <div class="row mt-3">
+        <RadzenButton Click="(async () => await SparaLapp())">Spara</RadzenButton>
+    </div>
+    </div>
+</div>
+
+@code {
+    public Lapp NyLapp { get; set; }
+
+    public Attributtyp[] Attributtyper { get; set; }
+    public List<Attribut> LappAttribut { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        NyLapp = new Lapp() { Attribut = new List<Attribut>() };
+        LappAttribut = new List<Attribut>();
+        Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>("api/attributtyp");
+        NyLapp.Attribut.AddRange(Attributtyper.Select(p => new Attribut { Attributtyp = p }));
+    }
+    public async Task SparaLapp()
+    {
+        await client.PostAsJsonAsync<Lapp>("api/lapp",NyLapp);
+    }
+}

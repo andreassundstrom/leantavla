@@ -9,7 +9,6 @@ namespace Leantavla.Shared
     public class Lapp
     {
         public int LappId { get; set; }
-        public string Sammanfattning { get; set; }
-        public string Beskrivning { get; set; }
+        public List<Attribut> Attribut { get; set; }
     }
 }
