@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Radzen;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -18,8 +19,8 @@ namespace Leantavla.Client
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
-            await builder.Build().RunAsync();
+            builder.Services.AddScoped<DialogService>();
+           await builder.Build().RunAsync();
         }
     }
 }

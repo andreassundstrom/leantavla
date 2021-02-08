@@ -36,7 +36,7 @@ namespace Leantavla.Server.Controllers
 
         // POST api/<LappController>
         [HttpPost]
-        public async Task Post([FromBody] Lapp lapp)
+        public async Task<StatusCodeResult> Post([FromBody] Lapp lapp)
         {
             foreach(var attribute in lapp.Attribut)
             {
@@ -44,7 +44,12 @@ namespace Leantavla.Server.Controllers
                 attribute.Attributtyp = null;
             }
             _context.Lappar.Add(lapp);
-            await _context.SaveChangesAsync();
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                return Ok();
+            }
+            else return StatusCode(500);
+            
         }
 
         // PUT api/<LappController>/5
