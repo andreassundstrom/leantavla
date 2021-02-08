@@ -1,4 +1,6 @@
 ﻿@inject HttpClient client
+@inject DialogService dialogService
+
 <div class="row nyLapp p-3">
     <div class="col">
         @foreach (Attribut attribut in NyLapp.Attribut)
@@ -25,13 +27,22 @@
                 }
             </div>
         }
-    <div class="row mt-3">
-        <RadzenButton Click="(async () => await SparaLapp())">Spara</RadzenButton>
-    </div>
-    </div>
+
+        <div class="row mt-3">
+            <RadzenButton Click="(async () => await SparaLapp())">Spara</RadzenButton>
+        </div>
+
+        @if (showErrorText)
+        {
+            <div class="alert alert-danger">
+                <strong>Error!</strong> Din lapp kunde inte skapas.
+            </div>
+        }
+        </div>
 </div>
 
 @code {
+    bool showErrorText = false;
     public Lapp NyLapp { get; set; }
 
     public Attributtyp[] Attributtyper { get; set; }
@@ -46,6 +57,16 @@
     }
     public async Task SparaLapp()
     {
-        await client.PostAsJsonAsync<Lapp>("api/lapp",NyLapp);
+        var result = await client.PostAsJsonAsync<Lapp>("api/lapp", NyLapp);
+
+        if (result.IsSuccessStatusCode)
+        {
+            dialogService.Close("success");
+        }
+        else
+        {
+            showErrorText = true;
+        }
+
     }
 }
