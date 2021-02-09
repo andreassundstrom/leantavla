@@ -1,18 +1,100 @@
 ﻿@inject HttpClient client
 @page "/lappar"
-<h3>Leanlappar</h3>
-@if (Lappar != null)
-{
-    @foreach (var lapp in Lappar)
-    {
-        <LappComponent Lapp="lapp"></LappComponent>
+@using Leantavla.Client
+<style>
+    * {
+        box-sizing: border-box;
     }
+
+    /* Create three equal columns that floats next to each other */
+    .column {
+        float: left !important;
+        width: @columnWidth;
+        padding: 10px !important;
+        height: 80vh !important;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+</style>
+<h3>Leanlappar</h3>
+
+@if (columnWidth is not null)
+{
+  
+
+        @foreach (string status in statusar)
+        {
+        <DropTarget T="Lapp" Drop="@(e => OnDrop(e,status))">
+            <div class="column" style="background-color:#aaa;">
+                <h2>@status</h2>
+
+                @if (Lappar is not null)
+                {
+                    @foreach (Lapp lapp in Lappar.Where(e => e.Attribut.Any(x => x.StringValue == status)))
+                    {
+                        <Draggable Data="lapp">
+                            <LappComponent Lapp="lapp"></LappComponent>
+                        </Draggable>
+                        
+                    }
+                }
+
+            </div>
+</DropTarget>
+ 
+        }
+   
 }
 
+
+
 @code {
+    string columnWidth { get; set; }
     public List<Lapp> Lappar { get; set; }
+    public Attributtyp[] Attributtyper { get; set; }
+
+    string[] statusar = new string[]
+    {
+        "Ny",
+        "Pågående",
+        "Klar"
+    };
+
     protected override async Task OnInitializedAsync()
     {
         Lappar = await client.GetFromJsonAsync<List<Lapp>>("api/lapp");
+        Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>("api/attributtyp");
+        GetColumnWidth();
+    }
+
+
+    private void GetColumnWidth()
+    {
+        int result = 100 / statusar.Count();
+
+        columnWidth = $"{result}%";
+        Console.WriteLine(columnWidth);
+    }
+
+    void OnDrop(Lapp data,string status)
+    {
+
+        var lapp = Lappar.FirstOrDefault(e => e.LappId == data.LappId);
+        if(lapp is not null)
+        {
+            var statusAttribut = Attributtyper.Where(x => x.Attributnamn == "Status").FirstOrDefault();
+            lapp.Attribut.Find(e => e.AttributtypId == statusAttribut.AttributtypId).StringValue = status;
+
+            client.PutAsJsonAsync<Lapp>("api/lapp", lapp);
+
+        }
+
+        StateHasChanged();
     }
 }

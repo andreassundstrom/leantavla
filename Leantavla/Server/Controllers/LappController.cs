@@ -53,9 +53,21 @@ namespace Leantavla.Server.Controllers
         }
 
         // PUT api/<LappController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public async Task<StatusCodeResult> Put([FromBody] Lapp lapp)
         {
+            foreach (var attribute in lapp.Attribut)
+            {
+                attribute.AttributtypId = attribute.Attributtyp.AttributtypId;
+                attribute.Attributtyp = null;
+            }
+            _context.Lappar.Update(lapp);
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                return Ok();
+            }
+            else return StatusCode(500);
+
         }
 
         // DELETE api/<LappController>/5

@@ -50,6 +50,13 @@ namespace Leantavla.Server.Models
                     Attributnamn = "Beskrivning",
                     Attributbeskrivning = "Beskrivning av problemet",
                     Datatyp = Datatyp.LongStringDatatype
+                },
+                new Attributtyp
+                {
+                    AttributtypId = 5,
+                    Attributnamn = "Status",
+                    Attributbeskrivning = "Ärendets status",
+                    Datatyp = Datatyp.StringDatatype
                 }
                 );
         }
