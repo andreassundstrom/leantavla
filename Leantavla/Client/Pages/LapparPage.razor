@@ -5,7 +5,7 @@
     * {
         box-sizing: border-box;
     }
-
+    
     /* Create three equal columns that floats next to each other */
     .column {
         float: left !important;
@@ -28,18 +28,18 @@
 {
   
 
-        @foreach (string status in statusar)
+        @foreach (Status status in Statusar)
         {
-        <DropTarget T="Lapp" Drop="@(e => OnDrop(e,status))">
+        <DropTarget T="Lapp" Drop="@(async e => await OnDrop(e,status))">
             <div class="column" style="background-color:#aaa;">
-                <h2>@status</h2>
+                <h2>@status.StatusNamn</h2>
 
                 @if (Lappar is not null)
                 {
-                    @foreach (Lapp lapp in Lappar.Where(e => e.Attribut.Any(x => x.StringValue == status)))
+                    @foreach (Lapp lapp in Lappar.Where(e => e.Status.StatusId == status.StatusId))
                     {
                         <Draggable Data="lapp">
-                            <LappComponent Lapp="lapp"></LappComponent>
+                                <LappComponent Lapp="lapp"></LappComponent>
                         </Draggable>
                         
                     }
@@ -59,42 +59,39 @@
     public List<Lapp> Lappar { get; set; }
     public Attributtyp[] Attributtyper { get; set; }
 
-    string[] statusar = new string[]
-    {
-        "Ny",
-        "Pågående",
-        "Klar"
-    };
+    List<Status> Statusar { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Lappar = await client.GetFromJsonAsync<List<Lapp>>("api/lapp");
+        await GetLappar();
         Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>("api/attributtyp");
+        Statusar = await client.GetFromJsonAsync<List<Status>>("api/attributtyp/status");
         GetColumnWidth();
     }
 
+    private async Task GetLappar()
+    {
+        Lappar = await client.GetFromJsonAsync<List<Lapp>>("api/lapp");
+    }
 
     private void GetColumnWidth()
     {
-        int result = 100 / statusar.Count();
+        int result = 100 / Statusar.Count();
 
         columnWidth = $"{result}%";
-        Console.WriteLine(columnWidth);
     }
 
-    void OnDrop(Lapp data,string status)
+    private async Task OnDrop(Lapp data,Status status)
     {
 
         var lapp = Lappar.FirstOrDefault(e => e.LappId == data.LappId);
         if(lapp is not null)
         {
-            var statusAttribut = Attributtyper.Where(x => x.Attributnamn == "Status").FirstOrDefault();
-            lapp.Attribut.Find(e => e.AttributtypId == statusAttribut.AttributtypId).StringValue = status;
-
-            client.PutAsJsonAsync<Lapp>("api/lapp", lapp);
+            lapp.StatusId = status.StatusId;
+            await client.PutAsJsonAsync<Lapp>("api/lapp", lapp);
 
         }
-
+        await GetLappar();
         StateHasChanged();
     }
 }

@@ -24,7 +24,10 @@ namespace Leantavla.Server.Controllers
         [HttpGet]
         public IEnumerable<Lapp> Get()
         {
-            return _context.Lappar.Include(p => p.Attribut).ThenInclude(p => p.Attributtyp).ToList();
+            return _context.Lappar
+                .Include(p => p.Status)
+                .Include(p => p.Attribut)
+                    .ThenInclude(p => p.Attributtyp).ToList();
         }
 
         // GET api/<LappController>/5
@@ -43,6 +46,7 @@ namespace Leantavla.Server.Controllers
                 attribute.AttributtypId = attribute.Attributtyp.AttributtypId;
                 attribute.Attributtyp = null;
             }
+            lapp.StatusId = 1;
             _context.Lappar.Add(lapp);
             if (await _context.SaveChangesAsync() > 0)
             {
@@ -61,6 +65,7 @@ namespace Leantavla.Server.Controllers
                 attribute.AttributtypId = attribute.Attributtyp.AttributtypId;
                 attribute.Attributtyp = null;
             }
+            lapp.Status = null;
             _context.Lappar.Update(lapp);
             if (await _context.SaveChangesAsync() > 0)
             {
