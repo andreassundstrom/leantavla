@@ -1,0 +1,28 @@
+﻿@foreach (Attribut attribut in Lapp.Attribut)
+{
+    <div class="row mt-1">
+        <RadzenLabel Style="max-width:100%"
+                     Text="@attribut.Attributtyp.Attributbeskrivning"></RadzenLabel>
+    </div>
+    <div class="row">
+        @if (attribut.Attributtyp.Datatyp == Datatyp.StringDatatype)
+        {
+            <RadzenTextBox Style="width:100%" @bind-Value="@attribut.StringValue" />
+        }
+        else if (attribut.Attributtyp.Datatyp == Datatyp.LongStringDatatype)
+        {
+            <RadzenTextArea Style="width:100%" @bind-Value="@attribut.StringValue" />
+        }
+        else if (attribut.Attributtyp.Datatyp == Datatyp.DateDataType)
+        {
+            <RadzenDatePicker Style="width:100%"
+                              ShowTime="false"
+                              DateFormat="d"
+                              @bind-Value="@attribut.DateValue" />
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public Lapp Lapp { get; set; }
+}
