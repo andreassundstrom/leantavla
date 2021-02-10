@@ -1,0 +1,41 @@
+﻿@inject HttpClient client
+@inject DialogService dialogService
+
+<div class="row nyLapp p-3">
+    <div class="col">
+        <RedigeraLappAttribut Lapp="Lapp"></RedigeraLappAttribut>
+
+        <div class="row mt-3">
+            <RadzenButton Click="(async () => await SparaLapp())">Spara</RadzenButton>
+        </div>
+
+        @if (showErrorText)
+        {
+            <div class="alert alert-danger">
+                <strong>Error!</strong> Din lapp kunde inte uppdateras.
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public Lapp Lapp { get; set; }
+    bool showErrorText = false;
+
+    public async Task SparaLapp()
+    {
+        var result = await client.PutAsJsonAsync<Lapp>("api/lapp", Lapp);
+
+        if (result.IsSuccessStatusCode)
+        {
+            dialogService.Close();
+        }
+        else
+        {
+            showErrorText = true;
+        }
+
+    }
+}

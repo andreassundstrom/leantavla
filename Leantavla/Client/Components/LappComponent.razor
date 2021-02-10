@@ -1,7 +1,43 @@
-﻿<RadzenCard Style="max-width:300px;background-color: khaki;margin-top:1em;margin-bottom:1em;cursor:move;">
+﻿@inject DialogService DialogService
+<style>
+    .kort {
+        max-width: 300px;
+        background-color: khaki;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        padding: 1.25rem 1.5625rem;
+        border-radius: 4px;
+        background-clip: border-box;
+        border: 1px solid rgba(0,0,0,.125);
+    }
+
+        .kort:hover {
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+        }
+</style>
+
+<div class="kort" @ondblclick="RedigeraLapp">
     <h3>@Lapp.Attribut.FirstOrDefault(p => p.Attributtyp.Attributnamn == "Sammanfattning")?.StringValue</h3>
     <p>@Lapp.Attribut.FirstOrDefault(p => p.Attributtyp.Attributnamn == "Beskrivning")?.StringValue</p>
-</RadzenCard>
+
+</div>
+
 @code {
     [Parameter] public Lapp Lapp { get; set; }
+
+    protected override void OnInitialized()
+    {
+        DialogService.OnClose += Close;
+    }
+
+    async void RedigeraLapp()
+    {
+        await DialogService.OpenAsync<RedigeraLappComponent>("Redigera lapp",new Dictionary<string, object>() { { "Lapp", Lapp } });
+    }
+
+    async void Close(dynamic result)
+    {
+       StateHasChanged();
+    }
+
 }
