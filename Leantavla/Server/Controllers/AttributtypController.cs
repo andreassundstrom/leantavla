@@ -25,6 +25,12 @@ namespace Leantavla.Server.Controllers
             return _context.Attributtyper.ToList();
         }
 
+        [HttpGet("status")]
+        public IEnumerable<Status> GetStatus()
+        {
+            return _context.Status.ToList();
+        }
+
         // GET api/<AttributtypController>/5
         [HttpGet("{id}")]
         public string Get(int id)

@@ -17,7 +17,7 @@ namespace Leantavla.Server.Models
         public virtual DbSet<Lapp> Lappar { get; set; }
         public virtual DbSet<Attributtyp> Attributtyper { get; set; }
         public virtual DbSet<Attribut> Attribut { get; set; }
-
+        public virtual DbSet<Status> Status { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -51,6 +51,13 @@ namespace Leantavla.Server.Models
                     Attributbeskrivning = "Beskrivning av problemet",
                     Datatyp = Datatyp.LongStringDatatype
                 }
+                );
+
+            modelBuilder.Entity<Status>()
+                .HasData(
+                new Status { StatusId = 1, StatusNamn = "Ny" },
+                new Status { StatusId = 2, StatusNamn = "Pågående" },
+                new Status { StatusId = 3, StatusNamn = "Avslutad" }
                 );
         }
     }
