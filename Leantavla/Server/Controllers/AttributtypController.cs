@@ -40,8 +40,10 @@ namespace Leantavla.Server.Controllers
 
         // POST api/<AttributtypController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task Post([FromBody] Attributtyp attributtyp)
         {
+            _context.Attributtyper.Add(attributtyp);
+            await _context.SaveChangesAsync();
         }
 
         // PUT api/<AttributtypController>/5
