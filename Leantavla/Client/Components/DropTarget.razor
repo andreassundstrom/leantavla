@@ -1,14 +1,20 @@
 ﻿@using Leantavla.Client
 @inject DragAndDropService DragAndDropService
 @typeparam T
-<div ondragover="event.preventDefault()" @ondrop="@OnDrop">
-    @ChildContent
+
+
+<div @ondragover="@(() => OnDrag(true))" @ondrop="@OnDrop" @ondragover:preventDefault="true" @ondragleave="@(() => OnDrag(false) )">
+
+            @ChildContent((isDragging.ToString()))
+
 </div>
 @code {
 
+    public string columnClass { get; set; } = "column";
+    bool isDragging = false;
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment<string> ChildContent { get; set; }
 
     [Parameter]
     public string Zone { get; set; }
@@ -16,12 +22,20 @@
     [Parameter]
     public Action<T> Drop { get; set; }
 
+
     void OnDrop()
     {
+        isDragging = false;
         if (Drop != null && DragAndDropService.Accepts(Zone))
         {
             Drop((T)DragAndDropService.Data);
         }
     }
+
+    void OnDrag(bool value)
+    {
+        isDragging = value;
+    }
+
 }
 
