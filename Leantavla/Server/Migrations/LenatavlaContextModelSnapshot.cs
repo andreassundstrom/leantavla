@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Leantavla.Server.Migrations
 {
-    [DbContext(typeof(LenatavlaContext))]
+    [DbContext(typeof(LeantavlaContext))]
     partial class LenatavlaContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

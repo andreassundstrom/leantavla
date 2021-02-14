@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Leantavla.Server.Models
 {
-    public class LenatavlaContext : DbContext
+    public class LeantavlaContext : DbContext
     {
-        public LenatavlaContext(DbContextOptions<LenatavlaContext> options)
+        public LeantavlaContext(DbContextOptions<LeantavlaContext> options)
             :base(options)
         {
 

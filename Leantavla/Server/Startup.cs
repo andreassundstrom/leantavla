@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
+using System.Threading;
 
 namespace Leantavla.Server
 {
@@ -24,13 +25,16 @@ namespace Leantavla.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<LenatavlaContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Leantavla")));
+            services.AddDbContext<LeantavlaContext>(options => options.UseSqlServer(
+                Configuration.GetConnectionString("Leantavla")
+                ));
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,LeantavlaContext lenatavlaContext)
         {
             if (env.IsDevelopment())
             {
@@ -43,7 +47,7 @@ namespace Leantavla.Server
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
