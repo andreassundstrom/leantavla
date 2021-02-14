@@ -12,7 +12,6 @@ namespace Leantavla.Client
 
         public void StartDrag(object data, string zone)
         {
-            Console.WriteLine("test");
             this.Data = data;
             this.Zone = zone;
         }

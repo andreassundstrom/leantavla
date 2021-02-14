@@ -5,13 +5,25 @@
     * {
         box-sizing: border-box;
     }
-    
-    /* Create three equal columns that floats next to each other */
+
     .column {
         float: left !important;
         width: @columnWidth;
         padding: 10px !important;
         height: 80vh !important;
+        margin: 5px !important;
+        border-radius: 4px;
+        background-color: #bae7ff;
+    }
+
+    .targetcolumn {
+        float: left !important;
+        width: @columnWidth;
+        padding: 10px !important;
+        height: 80vh !important;
+        margin: 5px !important;
+        background-color: #bae7ff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     /* Clear floats after the columns */
@@ -20,49 +32,43 @@
         display: table;
         clear: both;
     }
-
 </style>
-<h3>Leanlappar</h3>
+
 
 @if (columnWidth is not null)
 {
-  
+    @foreach (Status status in Statusar)
+    {
+        <DropTarget T="Lapp" Drop="@( async e => await OnDrop(e, status) )">            
+            <div class=@SetColumnClass(context)>
 
-        @foreach (Status status in Statusar)
-        {
-        <DropTarget T="Lapp" Drop="@(async e => await OnDrop(e,status))">
-            <div class="column" style="background-color:#aaa;">
                 <h2>@status.StatusNamn</h2>
 
-                @if (Lappar is not null)
+                @foreach (Lapp lapp in Lappar.Where(e => e.Status.StatusId == status.StatusId))
                 {
-                    @foreach (Lapp lapp in Lappar.Where(e => e.Status.StatusId == status.StatusId))
-                    {
-                        <Draggable Data="lapp">
-                                <LappComponent Lapp="lapp"></LappComponent>
-                        </Draggable>
-                        
-                    }
+                    <Draggable Data="lapp">
+                        <LappComponent Lapp="lapp"></LappComponent>
+                    </Draggable>
                 }
 
             </div>
-</DropTarget>
- 
-        }
-   
+        </DropTarget>
+    }
 }
 
 
-
 @code {
+    string divClass = "column";
+    bool isDragging { get; set; }
     string columnWidth { get; set; }
+
     public List<Lapp> Lappar { get; set; }
     public Attributtyp[] Attributtyper { get; set; }
-
     List<Status> Statusar { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+
         await GetLappar();
         Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>("api/attributtyp");
         Statusar = await client.GetFromJsonAsync<List<Status>>("api/attributtyp/status");
@@ -76,22 +82,54 @@
 
     private void GetColumnWidth()
     {
-        int result = 100 / Statusar.Count();
+        int result = 95 / Statusar.Count();
 
         columnWidth = $"{result}%";
     }
 
-    private async Task OnDrop(Lapp data,Status status)
+    private async Task OnDrop(Lapp data, Status status)
     {
-
         var lapp = Lappar.FirstOrDefault(e => e.LappId == data.LappId);
-        if(lapp is not null)
+        if (lapp is not null)
         {
             lapp.StatusId = status.StatusId;
             await client.PutAsJsonAsync<Lapp>("api/lapp", lapp);
 
         }
         await GetLappar();
+
+        isDragging = false;
+        Console.WriteLine(isDragging);
         StateHasChanged();
+
     }
+
+    string SetColumnClass(string context)
+    {
+        @if (context == "False" && isDragging)
+        {
+            divClass = "targetcolumn";
+            return divClass;
+        }
+        else if (context == "False" && !isDragging)
+        {
+            divClass = "column";
+            isDragging = false;
+            return divClass;
+        }
+        else if (context == "True" && isDragging)
+        {
+            divClass = "column";
+            return divClass;
+        }
+        else if (context == "True" && !isDragging)
+        {
+            isDragging = true;
+            divClass = "column";
+            StateHasChanged();
+            return divClass;
+        }
+        return divClass;
+    }
+
 }
