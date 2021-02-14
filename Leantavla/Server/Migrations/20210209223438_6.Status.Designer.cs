@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Leantavla.Server.Migrations
 {
-    [DbContext(typeof(LenatavlaContext))]
+    [DbContext(typeof(LeantavlaContext))]
     [Migration("20210209223438_6.Status")]
     partial class _6Status
     {

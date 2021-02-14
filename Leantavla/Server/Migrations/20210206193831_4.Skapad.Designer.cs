@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Leantavla.Server.Migrations
 {
-    [DbContext(typeof(LenatavlaContext))]
+    [DbContext(typeof(LeantavlaContext))]
     [Migration("20210206193831_4.Skapad")]
     partial class _4Skapad
     {

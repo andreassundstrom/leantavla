@@ -15,8 +15,8 @@ namespace Leantavla.Server.Controllers
     [ApiController]
     public class LappController : ControllerBase
     {
-        private readonly LenatavlaContext _context;
-        public LappController(LenatavlaContext context)
+        private readonly LeantavlaContext _context;
+        public LappController(LeantavlaContext context)
         {
             _context = context;
         }

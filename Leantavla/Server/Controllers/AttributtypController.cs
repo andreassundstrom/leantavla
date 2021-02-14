@@ -14,8 +14,8 @@ namespace Leantavla.Server.Controllers
     [ApiController]
     public class AttributtypController : ControllerBase
     {
-        private readonly LenatavlaContext _context;
-        public AttributtypController(LenatavlaContext context)
+        private readonly LeantavlaContext _context;
+        public AttributtypController(LeantavlaContext context)
         {
             _context = context;
         }
