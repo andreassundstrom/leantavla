@@ -1,6 +1,8 @@
-﻿using Leantavla.Server.Models;
+﻿using Leantavla.Server.Hubs;
+using Leantavla.Server.Models;
 using Leantavla.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,14 +34,18 @@ namespace Leantavla.Server.Controllers
 
         // GET api/<LappController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Lapp Get(int id)
         {
-            return "value";
+            return _context.Lappar
+                .Include(p => p.Status)
+                .Include(p => p.Attribut)
+                    .ThenInclude(p => p.Attributtyp)
+                    .Where(p => p.LappId == id).FirstOrDefault();
         }
 
         // POST api/<LappController>
         [HttpPost]
-        public async Task<StatusCodeResult> Post([FromBody] Lapp lapp)
+        public async Task<IActionResult> Post([FromBody] Lapp lapp)
         {
             foreach(var attribute in lapp.Attribut)
             {
@@ -48,9 +54,10 @@ namespace Leantavla.Server.Controllers
             }
             lapp.StatusId = 1;
             _context.Lappar.Add(lapp);
+
             if (await _context.SaveChangesAsync() > 0)
-            {
-                return Ok();
+            {              
+                return Ok(lapp.LappId);
             }
             else return StatusCode(500);
             
