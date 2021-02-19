@@ -1,11 +1,14 @@
-﻿@inject HttpClient client
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject HttpClient client
 @inject DialogService dialogService
+@inject NavigationManager NavigationManager
+
 
 <div class="row nyLapp p-3">
     <div class="col">
 
         <RedigeraLappAttribut Lapp="NyLapp"></RedigeraLappAttribut>
-     
+
 
         <div class="row mt-3">
             <RadzenButton Click="(async () => await SparaLapp())">Spara</RadzenButton>
@@ -18,22 +21,30 @@
             </div>
         }
 
-        </div>
+    </div>
 </div>
 
 @code {
     bool showErrorText = false;
     public Lapp NyLapp { get; set; }
+    private HubConnection hubConnection;
 
     public Attributtyp[] Attributtyper { get; set; }
     public List<Attribut> LappAttribut { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+
         NyLapp = new Lapp() { Attribut = new List<Attribut>() };
         LappAttribut = new List<Attribut>();
         Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>("api/attributtyp");
-        NyLapp.Attribut.AddRange(Attributtyper.Select(p => new Attribut { Attributtyp = p }));
+        NyLapp.Attribut.AddRange(Attributtyper.Select(p => new Attribut
+        {
+            Attributtyp = p
+        }));
+        hubConnection = GetHubConnection();
+
+        await hubConnection.StartAsync();
     }
     public async Task SparaLapp()
     {
@@ -41,7 +52,11 @@
 
         if (result.IsSuccessStatusCode)
         {
+            var lappId = await result.Content.ReadAsStringAsync();
+
             dialogService.Close("success");
+
+           await SendNewLapp(lappId);
         }
         else
         {
@@ -49,4 +64,19 @@
         }
 
     }
+    private HubConnection GetHubConnection()
+    {
+        HubConnection connection = new HubConnectionBuilder()
+      .WithUrl(NavigationManager.ToAbsoluteUri("/lapphub"))
+      .Build();
+
+        return connection;
+    }
+
+    private async Task SendNewLapp(string lappId)
+    {
+        var lapp = await client.GetFromJsonAsync<Lapp>($"api/lapp/{lappId}");
+        await hubConnection.SendAsync("SkickaLapp", lapp);
+    }
+
 }

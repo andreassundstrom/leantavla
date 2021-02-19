@@ -1,6 +1,10 @@
-﻿@inject HttpClient client
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject HttpClient client
+@inject NavigationManager NavigationManager
 @page "/lappar"
 @using Leantavla.Client
+@using Leantavla.Client.Components
+@using System.Collections.ObjectModel
 <style>
     * {
         box-sizing: border-box;
@@ -34,18 +38,19 @@
     }
 </style>
 
-
 @if (columnWidth is not null)
 {
     @foreach (Status status in Statusar)
     {
-        <DropTarget T="Lapp" Drop="@( async e => await OnDrop(e, status) )">            
+        Console.WriteLine(status);
+        <DropTarget T="Lapp" Drop="@( async e => await OnDrop(e, status) )">
             <div class=@SetColumnClass(context)>
 
                 <h2>@status.StatusNamn</h2>
 
-                @foreach (Lapp lapp in Lappar.Where(e => e.Status.StatusId == status.StatusId))
+                @foreach (Lapp lapp in Lappar.Where(e => e.StatusId == status.StatusId))
                 {
+                    
                     <Draggable Data="lapp">
                         <LappComponent Lapp="lapp"></LappComponent>
                     </Draggable>
@@ -65,6 +70,7 @@
     public List<Lapp> Lappar { get; set; }
     public Attributtyp[] Attributtyper { get; set; }
     List<Status> Statusar { get; set; }
+    private HubConnection hubConnection;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,6 +79,31 @@
         Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>("api/attributtyp");
         Statusar = await client.GetFromJsonAsync<List<Status>>("api/attributtyp/status");
         GetColumnWidth();
+
+        hubConnection = new HubConnectionBuilder()
+     .WithUrl(NavigationManager.ToAbsoluteUri("/lapphub"))
+     .Build();
+
+        hubConnection.On<Lapp>("HämtaLapp", (synclapp) =>
+        {
+            var gammalLapp = Lappar.FirstOrDefault(e => e.LappId == synclapp.LappId);
+
+            if (gammalLapp is null)
+            {
+                Lappar.Add(synclapp);
+                StateHasChanged();
+
+            }
+            else
+            {
+                Lappar.Remove(Lappar.Single(p => p.LappId == synclapp.LappId));
+                Lappar.Add(synclapp);
+                StateHasChanged();
+
+            }
+        });
+
+        await hubConnection.StartAsync();
     }
 
     private async Task GetLappar()
@@ -95,8 +126,9 @@
             lapp.StatusId = status.StatusId;
             await client.PutAsJsonAsync<Lapp>("api/lapp", lapp);
 
+            await hubConnection.SendAsync("SkickaLapp", lapp);
+
         }
-        await GetLappar();
 
         isDragging = false;
         Console.WriteLine(isDragging);

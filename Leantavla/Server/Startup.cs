@@ -1,3 +1,4 @@
+using Leantavla.Server.Hubs;
 using Leantavla.Server.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,17 +26,26 @@ namespace Leantavla.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddDbContext<LeantavlaContext>(options => options.UseSqlServer(
                 Configuration.GetConnectionString("Leantavla")
                 ));
             
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddResponseCompression(opts =>
+            {
+                opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[] { "application/octet-stream" });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,LeantavlaContext lenatavlaContext)
         {
+            app.UseResponseCompression();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -58,6 +68,7 @@ namespace Leantavla.Server
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                endpoints.MapHub<LappHub>("/lapphub");
                 endpoints.MapFallbackToFile("index.html");
             });
         }
