@@ -4,14 +4,16 @@ using Leantavla.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Leantavla.Server.Migrations
 {
     [DbContext(typeof(LeantavlaContext))]
-    partial class LenatavlaContextModelSnapshot : ModelSnapshot
+    [Migration("20210221004705_7.Bräda")]
+    partial class _7Bräda
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

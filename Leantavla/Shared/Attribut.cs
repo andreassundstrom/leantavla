@@ -2,6 +2,9 @@
 
 namespace Leantavla.Shared
 {
+    /// <summary>
+    /// Attribut som hör till en lapp
+    /// </summary>
     public class Attribut
     {
         public int AttributId { get; set; }

@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.SignalR.Client
 @inject HttpClient client
+@inject AppState appState 
 @inject NavigationManager NavigationManager
-@page "/lappar"
+@page "/lappar/{BrädaId}"
 @using Leantavla.Client
 @using Leantavla.Client.Components
 @using System.Collections.ObjectModel
@@ -37,7 +38,7 @@
         clear: both;
     }
 </style>
-
+<h1>@bräda?.BrädaNamn</h1>
 @if (columnWidth is not null)
 {
     @foreach (Status status in Statusar)
@@ -67,17 +68,20 @@
     bool isDragging { get; set; }
     string columnWidth { get; set; }
 
+    [Parameter] public string BrädaId { get; set; }
+    private int _brädaId { get; set; }
+    public Bräda bräda { get; set; }
     public List<Lapp> Lappar { get; set; }
-    public Attributtyp[] Attributtyper { get; set; }
     List<Status> Statusar { get; set; }
     private HubConnection hubConnection;
 
     protected override async Task OnInitializedAsync()
     {
-
+        _brädaId = Int32.Parse(BrädaId);
+        appState.ActiveBoardId = _brädaId;
+        bräda = await client.GetFromJsonAsync<Bräda>($"api/bräda/{_brädaId}");
         await GetLappar();
-        Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>("api/attributtyp");
-        Statusar = await client.GetFromJsonAsync<List<Status>>("api/attributtyp/status");
+        Statusar = await client.GetFromJsonAsync<List<Status>>($"api/attributtyp/status?BrädaId={_brädaId}");
         GetColumnWidth();
 
         hubConnection = new HubConnectionBuilder()
@@ -108,7 +112,7 @@
 
     private async Task GetLappar()
     {
-        Lappar = await client.GetFromJsonAsync<List<Lapp>>("api/lapp");
+        Lappar = await client.GetFromJsonAsync<List<Lapp>>($"api/lapp?BrädaId={_brädaId}");
     }
 
     private void GetColumnWidth()

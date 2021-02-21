@@ -24,9 +24,10 @@ namespace Leantavla.Server.Controllers
         }
         // GET: api/<LappController>
         [HttpGet]
-        public IEnumerable<Lapp> Get()
+        public IEnumerable<Lapp> GetBoardNotes(int BrädaId)
         {
             return _context.Lappar
+                .Where(p => p.BrädaId == BrädaId)
                 .Include(p => p.Status)
                 .Include(p => p.Attribut)
                     .ThenInclude(p => p.Attributtyp).ToList();
@@ -47,12 +48,17 @@ namespace Leantavla.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Lapp lapp)
         {
+            
             foreach(var attribute in lapp.Attribut)
             {
                 attribute.AttributtypId = attribute.Attributtyp.AttributtypId;
                 attribute.Attributtyp = null;
             }
-            lapp.StatusId = 1;
+            lapp.StatusId = _context.Status
+                .Where(p => p.BrädaId == lapp.BrädaId)
+                .OrderBy(p => p.StatusId)
+                .First().StatusId;
+
             _context.Lappar.Add(lapp);
 
             if (await _context.SaveChangesAsync() > 0)

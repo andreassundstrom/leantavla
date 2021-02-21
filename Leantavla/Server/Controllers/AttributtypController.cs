@@ -20,15 +20,15 @@ namespace Leantavla.Server.Controllers
             _context = context;
         }
         [HttpGet]
-        public IEnumerable<Attributtyp> Get()
+        public IEnumerable<Attributtyp> GetBrädattribut(int BrädaId)
         {
-            return _context.Attributtyper.ToList();
+            return _context.Attributtyper.Where(p => p.BrädaId == BrädaId).ToList();
         }
 
         [HttpGet("status")]
-        public IEnumerable<Status> GetStatus()
+        public IEnumerable<Status> GetStatus(int BrädaId)
         {
-            return _context.Status.ToList();
+            return _context.Status.Where(p => p.BrädaId == BrädaId).ToList();
         }
 
         // GET api/<AttributtypController>/5
