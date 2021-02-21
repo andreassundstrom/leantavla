@@ -13,6 +13,9 @@ namespace Leantavla.Shared
         [Required]
         public int StatusId { get; set; }
         public Status Status { get; set; }
+        public int BrädaId { get; set; }
+        
+        //public Bräda Bräda { get; set; }
         public List<Attribut> Attribut { get; set; }
     }
 }

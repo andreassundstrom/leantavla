@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject AppState appState
 @inject HttpClient client
 @inject DialogService dialogService
 @inject NavigationManager NavigationManager
@@ -37,7 +38,7 @@
 
         NyLapp = new Lapp() { Attribut = new List<Attribut>() };
         LappAttribut = new List<Attribut>();
-        Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>("api/attributtyp");
+        Attributtyper = await client.GetFromJsonAsync<Attributtyp[]>($"api/attributtyp?BrädaId={appState.ActiveBoardId.Value}");
         NyLapp.Attribut.AddRange(Attributtyper.Select(p => new Attribut
         {
             Attributtyp = p
@@ -48,6 +49,7 @@
     }
     public async Task SparaLapp()
     {
+        NyLapp.BrädaId = appState.ActiveBoardId.Value;
         var result = await client.PostAsJsonAsync<Lapp>("api/lapp", NyLapp);
 
         if (result.IsSuccessStatusCode)

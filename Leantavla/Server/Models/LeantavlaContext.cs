@@ -18,47 +18,15 @@ namespace Leantavla.Server.Models
         public virtual DbSet<Attributtyp> Attributtyper { get; set; }
         public virtual DbSet<Attribut> Attribut { get; set; }
         public virtual DbSet<Status> Status { get; set; }
+        public virtual DbSet<Bräda> Bräda { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Attributtyp>()
-                .HasData(new Attributtyp
-                {
-                    AttributtypId = 4,
-                    Attributnamn = "Skapare",
-                    Attributbeskrivning = "Personen som skapade lappen",
-                    Datatyp = Datatyp.StringDatatype
-                },
-                new Attributtyp
-                {
-                    AttributtypId = 3,
-                    Attributnamn = "Skapad",
-                    Attributbeskrivning = "Tidpunkt för när lappen skapades",
-                    Datatyp = Datatyp.DateDataType
-                },
-                new Attributtyp
-                {
-                    AttributtypId = 1,
-                    Attributnamn = "Sammanfattning",
-                    Attributbeskrivning = "Kort beskrivning av problemet",
-                    Datatyp = Datatyp.StringDatatype
-                },
-                new Attributtyp
-                {
-                    AttributtypId = 2,
-                    Attributnamn = "Beskrivning",
-                    Attributbeskrivning = "Beskrivning av problemet",
-                    Datatyp = Datatyp.LongStringDatatype
-                }
-                );
-
             modelBuilder.Entity<Status>()
-                .HasData(
-                new Status { StatusId = 1, StatusNamn = "Ny" },
-                new Status { StatusId = 2, StatusNamn = "Pågående" },
-                new Status { StatusId = 3, StatusNamn = "Avslutad" }
-                );
+                .HasOne(p => p.Bräda)
+                .WithMany(p => p.Statusar)
+                .OnDelete(DeleteBehavior.NoAction);
+                
         }
     }
 }

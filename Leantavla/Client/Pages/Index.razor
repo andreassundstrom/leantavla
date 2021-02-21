@@ -1,7 +1,39 @@
 ﻿@page "/"
+@inject HttpClient client
+<h1>Skapa en ny tavla</h1>
 
-<h1>Hello, world!</h1>
+<RadzenTextBox Disabled="inputDisabled" Placeholder="Namn på din tavla" @bind-Value="NamnPåTavla"></RadzenTextBox>
+<RadzenButton Disabled="inputDisabled" Click=SkapaTavla>Skapa</RadzenButton>
+@if(actionResult == "success")
+{
+    <div class="my-3 alert alert-success">
+        Tavlan skapades, <a href="@($"/lappar/{skapadBräda.BrädaId}")">börja skapa lappar</a>
+    </div>
 
-Welcome to your new app.
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code{
+    public bool inputDisabled = false;
+    public string NamnPåTavla { get; set; }
+    public string message { get; set; }
+    public string actionResult { get; set; }
+    public Bräda skapadBräda { get; set; }
+    public async Task SkapaTavla()
+    {
+        inputDisabled = true;
+        var result = await client.PostAsJsonAsync<Bräda>("api/bräda",new Bräda { BrädaNamn = NamnPåTavla });
+
+        if (result.IsSuccessStatusCode)
+        {
+
+            skapadBräda = await result.Content.ReadFromJsonAsync<Bräda>();
+            actionResult = "success";
+            message = $"Tavlan {NamnPåTavla} skapades";
+        }
+        else
+        {
+            NamnPåTavla = "";
+            inputDisabled = false;
+        }
+    }
+}
